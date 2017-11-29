@@ -127,4 +127,91 @@ ReactDOM.render(
 );
 ```
 
-Now lets try adding links as well. If we go to (http://www.dccomics.com/characters/superman)
+Now lets try adding links as well. If we go to http://www.dccomics.com/characters/superman or http://www.dccomics.com/characters/batman we can go to the web page for each hero. So lets make dynamic links:
+
+```
+function Hero(props){
+  return <p><strong><a href={"http://www.dccomics.com/characters/" + props.name}>{props.name}</a>:</strong> {props.power}</p>
+}
+```
+Remember the { } is just javascript so we can add our strings together in there. But we still have a problem, the Wonder Woman page won't open because the appropriate url is http://www.dccomics.com/characters/Wonder-Woman not http://www.dccomics.com/characters/Wonder%20Woman.
+
+Lets fix it with Javascript:
+```
+function Hero(props){
+  return <p><strong><a href={"http://www.dccomics.com/characters/" + props.name.replace(" ", "-")}>{props.name}</a>:</strong> {props.power}</p>
+}
+```
+Now our Hero component will replace any spaces in the name with dashes in the context of the URL. Wonder woman should work now, and lets make a new one for Green Lantern:
+
+```<Hero name="Green Lantern" power="Super powerful magic ring" />```
+
+However, no amount of string manipulation will put our poor 'Todd' hero in the DC database. To add a URL for him, we'll need to use some conditional logic. We can do this by putting an if/else statement in our component:
+```
+function Hero(props){
+  if(props.name != "Todd"){
+    return <p><strong><a href={"http://www.dccomics.com/characters/" + props.name.replace(" ", "-")}>{props.name}</a>:</strong> {props.power}</p>
+  } else {
+    return <p><strong><a href='http://toddwords.com'>{props.name}</a>:</strong> {props.power}</p>
+}
+```
+But there's a much faster way to do this. We can't write an if/else statement in JSX, but we can write a conditionaly using a ternery operator, which is a sort of condensed if/else that looks like this:
+
+`condition ? codeToDoIfConditionIsTrue : codeToDoIfConditionIsFalse`
+
+`mushroom == 'poisonous' ? safeToEat = false : safeToEat = true`
+
+So we can re-write the above statement as:
+```
+function Hero(props){
+  return <p><strong><a href={props.name != "Todd" ? "http://www.dccomics.com/characters/" + props.name.replace(" ", "-D") : "http://toddwords.com"}>{props.name}</a>:</strong> {props.power}</p>
+}
+```
+We can put the ternary statement right in with our JSX, making our code only branch when it needs to.
+
+### Adding Styles
+
+Lets say we want to add some styles to our React, maybe a custom color for each hero. We can't just add style to the JSX in-element like we would in HTML. Instead, JSX expects to see styles added as a Javascript object
+
+```
+function Hero(props){
+  var styles = {fontFamily: 'Arial', color: props.color}
+  return <p style={styles}><strong><a href={props.name != "Todd" ? "http://www.dccomics.com/characters/" + props.name.replace(" ", "-D") : "http://toddwords.com"}>{props.name}</a>:</strong> {props.power}</p>
+}
+
+<Hero name="Superman" power="Super strength and flight" color="red" />
+<Hero name="Batman" power="Cool gadgets and money" color="black"/>
+<Hero name="Wonder Woman" power="Magic lasso and invisible jet" color="blue" />
+<Hero name="Green Lantern" power="Super powerful magic ring" color="green" />
+<Hero name="Todd" power="Teaching and bad jokes" color="purple" />
+```
+
+Note that the css property 'font-family' is replaced with 'fontFamily' in JSX. This is true of all multi-word css properties, and is one of the few weird quirks where JSX is different from HTML. (Another is the use of 'class' in HTML which is replaced with 'className')
+
+### Advanced Components
+
+Components can do more than just show HTML. They can also keep track of information and hold events. To do this we need to write them as a class extending React.Component rather than just a function though.
+
+```
+class Hero extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {peopleSaved: 0};
+
+    this.handleClick = this.handleClick.bind(this);
+} 
+  handleClick(){
+    this.setState(function(prevState){
+     prevState.peopleSaved = prevState.peopleSaved + 1;
+     return prevState;
+	})
+}
+  render() {
+  var styles = {fontFamily: 'Arial', color: this.props.color}
+  return <p onClick={this.handleClick} style={styles}><strong><a href={this.props.name != "Todd" ? "http://www.dccomics.com/characters/" + this.props.name.replace(" ", "-D") : "http://toddwords.com"}>{this.props.name}</a>:</strong> {this.props.power}, People Saved: {this.state.peopleSaved}</p>
+ }
+}
+```
+
+
+More React docs here: https://reactjs.org/docs/
