@@ -85,4 +85,46 @@ But you may have noticed something weird about our previous code. Why doesn't ou
 
 JSX can write content to the browser as easily as HTML, but we can manipulate it and access data with it as if it were Javascript. This allows us to make **components**.
 
-###Components
+### Components
+
+Let's say we want to make a list of superheroes:
+
+```
+<h1>Superman: Super strength and flight</h1>
+<h1>Batman: Cool gadgets and money</h1>
+<h1>Wonder Woman: Magic lasso and invisible jet</h1>
+<h1>Todd: Teaching and bad jokes</h1>
+```
+And lets say we want to make some changes, like putting the names in bold or using a p tag rather than an h1. We have to go in and change all of the HTML:
+```
+<p><strong>Superman:</strong> Super strength and flight</p>
+<p><strong>Batman:</strong> Cool gadgets and money</p>
+<p><strong>Wonder Woman:</strong> Magic lasso and invisible jet</p>
+<p><strong>Todd:</strong> Teaching and bad jokes</p>
+```
+It's kind of a pain because we have to go through and change each line individually. This is a good case for a **React component**.
+
+A **React component** is just a function that returns JSX. It takes in an object called `props` and uses that as a variable to show different information. We could represent the heroes in the list above as:
+
+```
+function Hero(props){
+  return <p><strong>{props.name}:</strong> {props.power}</p>
+}
+```
+The content in the { } processes as regular Javascript rather than JSX. Also note, always name your React components with a capital letter.
+
+You call a component like an HTML element, filling in the props like HTML attributes.
+```
+var destination = document.querySelector('#container')
+ReactDOM.render(
+  <div id='heroList'>
+	<Hero name="Superman" power="Super strength and flight" />
+	<Hero name="Batman" power="Cool gadgets and money" />
+	<Hero name="Wonder Woman" power="Magic lasso and invisible jet" />
+	<Hero name="Todd" power="Teaching and bad jokes" />
+  </div>,
+  destination  
+);
+```
+
+Now lets try adding links as well. If we go to (http://www.dccomics.com/characters/superman)
